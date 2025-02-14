@@ -10,12 +10,18 @@ const key = {
 }
 const router = express.Router();
 
-router.get('/chose', async function(req, res, next) {
+router.get('/chose/:apikey', async function(req, res, next) {
     try {
+        const { apikey } = req.params;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
         const [results] = await db.query('SELECT * FROM area');
         console.log(results);
         res.json(results);
-    } catch (err) {
+    }catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Database error' });
     }
