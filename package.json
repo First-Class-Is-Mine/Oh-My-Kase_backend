@@ -1,0 +1,25 @@
+{
+  "name": "oh-my-kase_backend",
+  "version": "1.0.0",
+  "description": "2025년도 일본 글로벌 인턴십 프로젝트",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.12.0",
+    "nodemon": "^3.1.9",
+    "path": "^0.12.7",
+    "session": "^0.1.0",
+    "sudo": "^1.0.3"
+  }
+}
