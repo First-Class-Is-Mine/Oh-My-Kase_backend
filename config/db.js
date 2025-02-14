@@ -1,17 +1,26 @@
 const mysql = require('mysql2');
-const connection = mysql.createConnection({
+const dotenv = require('dotenv');
+
+dotenv.config(); // .env 파일 로드
+
+const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password : process.env.MYSQL_PASSWORD,
-    database : process.env.MYSQL_ID
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_ID,
+    waitForConnections: true,
 });
 
-connection.connect((err) => {
+// MySQL 연결 확인
+pool.getConnection((err, connection) => {
     if (err) {
         console.error('MySQL 연결 실패:', err);
-        return;
+    } else {
+        console.log('MySQL 연결 성공!');
+        connection.release(); // 연결 반환
     }
-    console.log('MySQL 연결 성공!');
 });
-  
-connection.end();
+
+
+// 비동기 방식
+module.exports = pool.promise();
