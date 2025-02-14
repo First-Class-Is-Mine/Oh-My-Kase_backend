@@ -1,9 +1,7 @@
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 
-
 dotenv.config(); // .env 파일 로드
-
 
 const pool = mysql.createPool({
     host: 'localhost',
@@ -12,7 +10,6 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_ID,
     waitForConnections: true,
 });
-
 
 // MySQL 연결 확인
 pool.getConnection((err, connection) => {
