@@ -21,6 +21,5 @@ pool.getConnection((err, connection) => {
     }
 });
 
-
 // 비동기 방식
 module.exports = pool.promise();

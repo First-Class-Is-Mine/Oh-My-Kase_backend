@@ -9,6 +9,10 @@ dotenv.config();
 const app = express();
 app.set('port', process.env.PORT || 3000)
 
+// 라우터 설정
+const ChoseArea = require('./routes/chose_area_api');
+const AreaFilter = require("./routes/shop_area_filter");
+
 app.use(morgan('dev'));
 app.use('/',express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -25,10 +29,12 @@ app.use(session({
     name: 'session-cookie',
 }));
 
-app.use((req, res, next) => {
-    console.log('모든 요청에 다 실행됩니다.');
-});
+// routes에서 만든 라우터 불러오기
+app.use('/api/area', ChoseArea);
+app.use('/api/area', AreaFilter);
 
+
+// 기본 라우터
 app.get('/',(req,res)=>{
     res.send('Hello, Express');
 });
