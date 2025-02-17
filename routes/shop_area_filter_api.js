@@ -18,7 +18,7 @@ router.get('/filter/:apikey/:search_area', async function(req, res, next) {
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
             return res.status(401).send('apikey is not valid.');
         }
-        
+    
         // 지역 및 상점 데이터 조회
         const [area] = await db.query('SELECT area_id, shop_name FROM shop');
         console.log("DB 데이터:", area); // 데이터 구조 확인
