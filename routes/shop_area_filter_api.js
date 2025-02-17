@@ -20,7 +20,7 @@ router.get('/filter/:apikey/:search_area', async function(req, res, next) {
         }
     
         // 지역 및 상점 데이터 조회
-        const [area] = await db.query('SELECT area_id, shop_name FROM shop');
+        const [area] = await db.query('SELECT id, area_id, shop_name FROM shop');
         console.log("DB 데이터:", area); // 데이터 구조 확인
         console.log("요청한 지역:", search_area); // 찾는 데이터 확인
 
@@ -30,8 +30,7 @@ router.get('/filter/:apikey/:search_area', async function(req, res, next) {
 
         // 검색한 지역과 일치하는 가게만 필터링
         const filteredShops = area
-            .filter(item => item.area_id === Number(search_area))
-            .map(item => item.shop_name);
+            .filter(item => item.area_id === Number(search_area));
 
         console.log("필터링된 결과:", filteredShops);
         res.json(filteredShops);
