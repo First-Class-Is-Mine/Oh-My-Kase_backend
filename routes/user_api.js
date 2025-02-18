@@ -41,4 +41,48 @@ router.post('/join/:apikey', async function (req, res, next) {
     }
 });
 
+// 로그인
+router.post('/login/:apikey', async function (req, res, next) {
+    try {
+        const { apikey } = req.params;
+        const { user_mail, user_password } = req.body;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        // 필요한 내용이 입력되었는지 확인
+        if (!user_mail || !user_password) {
+            return res.status(400).json({ error: 'Email and password are required.' });
+        }
+
+        // DB 사용자 조회
+        const sql = 'SELECT id, user_name, user_password FROM user WHERE user_mail = ?';
+        const [rows] = await db.query(sql, [user_mail]);
+
+        if(rows.length === 0) {
+            console.log('회원가입 되지 않은 사용자입니다.')
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const user = rows[0];
+
+        // 비밀번호 검증
+        if(user.user_password != user_password){
+            return res.status(404).json({ error: 'Invalid password'})
+        }
+
+        // 로그인 성공
+        res.json({
+            user_id: user.id,
+            user_name: user.user_name
+        });
+       
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 module.exports = router;
