@@ -13,6 +13,7 @@ app.set('port', process.env.PORT || 3000)
 const ChoseArea = require('./routes/chose_area_api');
 const AreaFilter = require('./routes/shop_area_filter_api');
 const SearchShop = require('./routes/search_shop_api');
+const ChoseCategory = require('./routes/chose_category_api');
 const CategoryFilter = require('./routes/shop_category_fiter_api');
 const User = require('./routes/user_api');
 
@@ -36,6 +37,7 @@ app.use(session({
 app.use('/api/area', ChoseArea);
 app.use('/api/area', AreaFilter);
 app.use('/api/shop', SearchShop);
+app.use('/api/category', ChoseCategory);
 app.use('/api/category', CategoryFilter);
 app.use('/api/user', User)
 
