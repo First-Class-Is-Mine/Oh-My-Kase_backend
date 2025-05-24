@@ -1,4 +1,4 @@
-/* 유저 회원가입, 로그인, 로그아웃 api */
+/* 유저 api */
 
 const express = require('express');
 const uuidAPIKey = require('uuid-apikey');
@@ -12,7 +12,6 @@ const key = {
 
 const router = express.Router();
 
-// 회원가입
 // 이메일 중복 확인 + 인증 번호 생성 및 발송
 router.post('/join/request-authcode/:apikey', async function (req, res) {
     try {
@@ -121,6 +120,41 @@ router.post('/join/complete/:apikey', async function (req, res) {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// 로그인
+router.post('/login/:apikey', async (req, res) => {
+    try {
+        const { apikey } = req.params;
+        const { mail, password } = req.body;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        if(!mail || !password) {
+            return res.status(400).send({ err: 'mail 또는 password가 입력되지 않았습니다.' });
+        }
+        const [user_check] = await db.query('SELECT id, user_mail, user_password FROM user');
+
+        const user = user_check.find(u => u.user_mail === mail);
+
+        if (user) {
+            if (password === user.user_password) {
+                req.session.user = {id : user.id};
+                return res.status(200).json({ message: '로그인 성공!' });
+            } else {
+                 return res.status(400).send({ error: 'password를 잘못 입력하셨습니다.' });
+            }  
+        } else {
+            return res.status(500).send({ err: '사용자를 찾을 수 없습니다.' });
+        }
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({err: 'Database error'});
     }
 });
 
