@@ -9,6 +9,7 @@ const pool = mysql.createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_ID,
     waitForConnections: true,
+    charset: 'utf8mb4'
 });
 
 // MySQL 연결 확인
