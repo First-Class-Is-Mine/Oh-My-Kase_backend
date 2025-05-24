@@ -158,4 +158,23 @@ router.post('/login/:apikey', async (req, res) => {
     }
 });
 
+// 로그아웃
+router.post('/logout/:apikey', (req, res) => {
+    const { apikey } = req.params;
+
+    // API 키 검증
+    if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+        return res.status(401).send('apikey is not valid.');
+    }
+
+    req.session.destroy(err => {
+        if (err) {
+            console.error('세션 삭제 중 에러:', err);
+            return res.status(500).send({ error: "로그아웃 실패" });
+        }
+        res.clearCookie('connect.sid');
+        return res.status(200).send({ message: '로그아웃 성공!' });
+    });
+});
+
 module.exports = router;
