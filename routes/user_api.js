@@ -243,4 +243,26 @@ router.patch('/update/:apikey', async (req, res) => {
     }
 });
 
+// 회원 탈퇴
+router.delete('/delete/:apikey', async (req, res) => {
+    try{
+        const { apikey } = req.params;
+        const user_id = req.session.user?.id;
+        console.log(user_id);
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        await db.query('DELETE FROM user WHERE id = ?', [user_id]);
+        res.status(200).send({ message: '회원 탈퇴 되었습니다!' });
+        req.session.destroy;
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({err: 'Database error'});
+    }
+});
+
 module.exports = router;
