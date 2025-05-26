@@ -18,6 +18,7 @@ const SearchShop = require('./routes/search_shop_api');
 const ChoseCategory = require('./routes/chose_category_api');
 const CategoryFilter = require('./routes/shop_category_fiter_api');
 const User = require('./routes/user_api');
+const BookMark = require('./routes/boomark_api');
 
 app.use(morgan('dev'));
 app.use('/',express.static(path.join(__dirname, 'public')));
@@ -43,7 +44,8 @@ app.use('/api/shop', ChoseShop);
 app.use('/api/shop', SearchShop);
 app.use('/api/category', ChoseCategory);
 app.use('/api/category', CategoryFilter);
-app.use('/api/user', User)
+app.use('/api/user', User);
+app.use('/api/bookmark', BookMark);
 
 // 기본 라우터
 app.get('/',(req,res)=>{
