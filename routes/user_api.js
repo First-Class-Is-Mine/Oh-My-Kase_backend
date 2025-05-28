@@ -12,24 +12,24 @@ const key = {
 const router = express.Router();
 
 // 회원가입
-router.post('/join/complete/:apikey', async function (req, res) {
+router.post('/join/:apikey', async function (req, res) {
     try{
         const { apikey } = req.params;
-        const { name, password, password_ck } = req.body;
+        const { name, nickname, password, password_ck } = req.body;
 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
             return res.status(401).send('apikey is not valid.');
         }
 
-        if (!name || !password || !password_ck) {
-            res.status(400).send({ error: 'name 또는 password 또는 password_ck가 입력되지않았습니다.' });
+        if (!name || !nickname || !password || !password_ck) {
+            res.status(400).send({ error: 'name 또는 nickname 또는 password 또는 password_ck가 입력되지않았습니다.' });
         }
         if (password !== password_ck) {
             res.status(400).send({ error: 'password와 password_ck가 일지하지 않습니다.' });
         }
         
-        await db.query('INSERT INTO user (user_name, user_password) VALUES (?, ?)', [name, password]);
+        await db.query('INSERT INTO user (user_name, user_nickname, user_password) VALUES (?, ?, ?)', [name, nickname, password]);
         return res.status(200).json({ message: '회원가입 성공!' });
 
     } catch (err) {
