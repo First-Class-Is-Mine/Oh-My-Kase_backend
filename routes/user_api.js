@@ -42,19 +42,19 @@ router.post('/join/:apikey', async function (req, res) {
 router.post('/login/:apikey', async (req, res) => {
     try {
         const { apikey } = req.params;
-        const { mail, password } = req.body;
+        const { nickname, password } = req.body;
 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
             return res.status(401).send('apikey is not valid.');
         }
 
-        if(!mail || !password) {
-            return res.status(400).send({ err: 'mail 또는 password가 입력되지 않았습니다.' });
+        if(!nickname || !password) {
+            return res.status(400).send({ err: 'nickname 또는 password가 입력되지 않았습니다.' });
         }
-        const [user_check] = await db.query('SELECT id, user_mail, user_password FROM user');
+        const [user_check] = await db.query('SELECT id, user_nickname, user_password FROM user');
 
-        const user = user_check.find(u => u.user_mail === mail);
+        const user = user_check.find(u => u.user_nickname === nickname);
 
         if (user) {
             if (password === user.user_password) {
