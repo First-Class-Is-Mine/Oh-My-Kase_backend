@@ -1,4 +1,4 @@
-/* 지역 선택 api */
+/* 가게 api */
 
 const express = require('express');
 const uuidAPIKey = require('uuid-apikey');
@@ -8,20 +8,29 @@ const key = {
     apiKey: process.env.API_KEY,
     uuid: '3ed8e58c-3256-464f-bec4-63925ebfae75'        
 }
+
 const router = express.Router();
 
-router.get('/chose/:apikey', async function(req, res, next) {
+// 가게 정보 조회
+router.get('/:apikey/:shop_id', async (req, res) => {
     try {
-        const { apikey } = req.params;
-
+        const { apikey, shop_id } = req.params;
+ 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
             return res.status(401).send('apikey is not valid.');
         }
-        const [results] = await db.query('SELECT * FROM area');
-        console.log(results);
-        res.json(results);
-    }catch (err) {
+        if(!shop_id) {
+            return res.status(400).send({ error: 'shop_id 값이 존재하지 않습니다.' });
+        }
+
+        const [shop] = await db.query('SELECT * FROM shop WHERE id = ?', [shop_id]);
+        if (!shop) {
+            return res.status(400).send({ error: '조건에 맞는 shop이 존재하지 않습니다.' });
+        }
+        return res.status(200).json(shop);
+
+    } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Database error' });
     }
