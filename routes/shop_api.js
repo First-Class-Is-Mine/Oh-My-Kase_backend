@@ -43,7 +43,8 @@ router.get('/:apikey/:shop_id', async (req, res) => {
             return res.status(400).send({ error: 'shop_id 값이 존재하지 않습니다.' });
         }
 
-        const [shop] = await db.query('SELECT * FROM shop WHERE id = ?', [shop_id]);
+        const [shop] = await db.query('SELECT DISTINCT shop.*, GROUP_CONCAT(tag_list.tag_name) AS tag_names FROM shop JOIN tag ON shop.id = tag.shop_id JOIN tag_list ON tag.tag_id = tag_list.id WHERE shop.id = ?', [shop_id]);
+        
         if (!shop) {
             return res.status(400).send({ error: '조건에 맞는 shop이 존재하지 않습니다.' });
         }
