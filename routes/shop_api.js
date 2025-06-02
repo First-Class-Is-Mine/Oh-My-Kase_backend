@@ -21,7 +21,7 @@ router.get('/shop_list/:apikey', async (req, res) => {
             return res.status(401).send('apikey is not valid.');
         }
 
-        const [shop_list] = await db.query('SELECT id, area_id, shop_category_id, shop_name, rating FROM shop');
+        const [shop_list] = await db.query('SELECT shop.id, shop.area_id, shop.shop_category_id, shop.shop_name, shop.rating, area.area_name FROM shop JOIN area ON shop.area_id = area.id');
         res.status(200).send(shop_list);
 
     } catch (err) {
