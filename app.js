@@ -13,6 +13,7 @@ app.set('port', process.env.PORT || 3000)
 const User = require('./routes/user_api');
 const BookMark = require('./routes/boomark_api');
 const Search = require('./routes/search_api');
+const Shop = require('./routes/shop_api');
 
 app.use(morgan('dev'));
 app.use('/',express.static(path.join(__dirname, 'public')));
@@ -34,6 +35,7 @@ app.use(session({
 app.use('/api/user', User);
 app.use('/api/bookmark', BookMark);
 app.use('/api/search', Search);
+app.use('/api/shop', Shop);
 
 // 기본 라우터
 app.get('/',(req,res)=>{
