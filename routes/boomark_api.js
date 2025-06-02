@@ -71,7 +71,7 @@ router.get('/user/:apikey', async (req, res) => {
         }
 
         const [row] = await db.query('SELECT * FROM shop WHERE id IN (SELECT shop_id FROM bookmark WHERE user_id = ?)', [user_id]);
-        const bookmark_list = row[0];
+        const bookmark_list = row;
         return res.status(200).json({ bookmark_list });
 
     } catch (err) {
