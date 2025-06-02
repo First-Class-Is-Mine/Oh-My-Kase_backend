@@ -99,7 +99,7 @@ router.get('/info/:apikey', async (req, res) => {
     console.log(user_id);
 
     try {
-        const [user] = await db.query('SELECT user_name, user_mail, user_allergy FROM user WHERE user.id = ?', [user_id]);
+        const [user] = await db.query('SELECT user_name, user_nickname, user_allergy FROM user WHERE user.id = ?', [user_id]);
 
         if(!user){
             return res.status(404).send({ error: "사용자 정보를 찾을 수 없습니다." });
@@ -119,7 +119,7 @@ router.patch('/update/:apikey', async (req, res) => {
         const { apikey } = req.params;
         const user_id = req.session.user?.id;
         console.log(user_id);
-        const { name, mail, allergy } = req.body;
+        const { name, nickname, allergy } = req.body;
 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
@@ -134,8 +134,8 @@ router.patch('/update/:apikey', async (req, res) => {
             fields.push('user_name = ?');
             values.push(name);
         }
-        if(mail) {
-            fields.push('user_mail = ?');
+        if(nickname) {
+            fields.push('user_nickname = ?');
             values.push(mail);
         }
         if(allergy) {
