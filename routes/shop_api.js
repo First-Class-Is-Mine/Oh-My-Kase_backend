@@ -11,6 +11,25 @@ const key = {
 
 const router = express.Router();
 
+// 모든 가게 정보
+router.get('/shop_list/:apikey', async (req, res) => {
+    try {
+        const { apikey } = req.params;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        const [shop_list] = await db.query('SELECT id, area_id, shop_category_id, shop_name, rating FROM shop');
+        res.status(200).send(shop_list);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 // 가게 정보 조회
 router.get('/:apikey/:shop_id', async (req, res) => {
     try {
