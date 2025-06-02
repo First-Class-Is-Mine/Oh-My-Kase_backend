@@ -136,7 +136,7 @@ router.patch('/update/:apikey', async (req, res) => {
         }
         if(nickname) {
             fields.push('user_nickname = ?');
-            values.push(mail);
+            values.push(nickname);
         }
         if(allergy) {
             fields.push('user_allergy = ?');
