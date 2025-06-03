@@ -35,19 +35,20 @@ router.post('/add/:apikey/:shop_id', async (req, res) => {
 });
 
 // 북마크 삭제
-router.delete('/delete/:apikey/:bookmark_id', async (req, res) => {
+router.delete('/delete/:apikey/:shop_id', async (req, res) => {
     try {
-        const { apikey, bookmark_id } = req.params;
+        const { apikey, shop_id } = req.params;
+        const user_id = req.session.user?.id;
 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
             return res.status(401).send('apikey is not valid.');
         }
-        if (!bookmark_id) {
-            return res.status(400).send({ error: 'bookmark_id가 존재하지 않습니다.' });
+        if (!shop_id) {
+            return res.status(400).send({ error: 'shop_id가 존재하지 않습니다.' });
         }
 
-        await db.query('DELETE FROM bookmark WHERE id = ?', [bookmark_id]);
+        await db.query('DELETE FROM bookmark WHERE user_id = ? AND shop_id = ?', [user_id, shop_id]);
         return res.status(200).json({ message: '북마크에서 삭제되었습니다!' })
 
     } catch (err) {
