@@ -75,7 +75,7 @@ router.get('/tagfilliter/:apikey/:tag_id', async (req, res) => {
         if (!tag_id) {
             return res.status(400).send({ error: 'tag_id가 존재하지 않습니다.' });
         }
-        const [shop_list] = await db.query('SELECT DISTINCT s.id, s.area_id, s.shop_category_id, s.shop_name, s.shop_imgae, s.rating, s.open_time, s.close_time, s.shop_word FROM tag t JOIN shop s ON t.shop_id = s.id JOIN tag_list tl ON t.tag_id = tl.id WHERE t.tag_id = ?;', [tag_id]);
+        const [shop_list] = await db.query('SELECT DISTINCT s.* FROM tag t JOIN shop s ON t.shop_id = s.id JOIN tag_list tl ON t.tag_id = tl.id WHERE t.tag_id = ?;', [tag_id]);
         if (!shop_list || shop_list.length === 0) {
             return res.status(400).send({ error: '조건에 맞는 shop이 존재하지 않습니다.' });
         }
