@@ -25,7 +25,8 @@ router.get('/areafiliter/:apikey/:area_id', async (req, res) => {
             return res.status(400).send({ error: 'area_id가 존재하지 않습니다.' });
         }   
 
-        const [area] = await db.query('SELECT * FROM shop WHERE area_id = ?', [area_id]);
+        const [area] = await db.query('SELECT shop.*, area.area_name FROM shop JOIN area ON shop.area_id = area.id WHERE area_id = ? GROUP BY shop.id', [area_id]);
+        
         if (!area || area.length === 0) {
             return res.status(400).send({ error: '조건에 맞는 shop이 존재하지 않습니다.' });
         }
@@ -51,7 +52,7 @@ router.get('/categoryfiliter/:apikey/:category_id', async (req, res) => {
             return res.status(400).send({ error: 'category_id가 존재하지 않습니다.' });
         }   
 
-        const [category] = await db.query('SELECT * FROM shop WHERE shop_category_id = ?', [category_id]);
+        const [category] = await db.query('SELECT shop.*, area.area_name FROM shop JOIN area ON shop.area_id = area.id WHERE shop_category_id = ?', [category_id]);
         if (!category || category.length === 0) {
             return res.status(400).send({ error: '조건에 맞는 shop이 존재하지 않습니다.' });
         }
