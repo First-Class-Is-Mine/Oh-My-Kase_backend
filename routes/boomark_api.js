@@ -71,7 +71,7 @@ router.get('/user/:apikey', async (req, res) => {
             return res.status(400).send({ error: 'user_id가 존재하지 않습니다.' });
         }
 
-        const [row] = await db.query('SELECT * FROM shop WHERE id IN (SELECT shop_id FROM bookmark WHERE user_id = ?)', [user_id]);
+        const [row] = await db.query('SELECT shop.*, area.area_name FROM shop JOIN area ON shop.area_id = area.id WHERE shop.id IN (SELECT shop_id FROM bookmark WHERE user_id = ?)', [user_id]);
         const bookmark_list = row;
         return res.status(200).json({ bookmark_list });
 
