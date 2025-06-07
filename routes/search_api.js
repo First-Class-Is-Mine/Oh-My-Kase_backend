@@ -12,7 +12,7 @@ const key = {
 const router = express.Router();
 
 // 지역별 식당 검색
-router.get('/areafiliter/:apikey/:area_id', async (req, res) => {
+router.get('/areafilter/:apikey/:area_id', async (req, res) => {
     try {
         const { apikey, area_id } = req.params;
 
@@ -39,7 +39,7 @@ router.get('/areafiliter/:apikey/:area_id', async (req, res) => {
 });
 
 // 카테고리별 식당 검색
-router.get('/categoryfiliter/:apikey/:category_id', async (req, res) => {
+router.get('/categoryfilter/:apikey/:category_id', async (req, res) => {
     try {
         const { apikey, category_id } = req.params;
 
@@ -65,7 +65,7 @@ router.get('/categoryfiliter/:apikey/:category_id', async (req, res) => {
 });
 
 // 해시태그별 식당 검색
-router.get('/tagfilliter/:apikey/:tag_id', async (req, res) => {
+router.get('/tagfilter/:apikey/:tag_id', async (req, res) => {
     try {
         const { apikey, tag_id } = req.params;
 
