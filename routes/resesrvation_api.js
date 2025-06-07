@@ -11,6 +11,57 @@ const key = {
 
 const router = express.Router();
 
+// 예약 일시, 시간, 인원 데이터 반환
+router.get('/info/:apikey/:reservation_id', async (req, res) => {
+    try {
+        const { apikey, reservation_id } = req.params;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        const [info] = await db.query('SELECT date, time, people_num FROM reservation WHERE id = ?', [reservation_id]);        
+        const reserve_info = info[0];
+
+        if(!reserve_info) {
+            return res.status(400).json({ error: '예약 정보가 없습니다.' });
+        }
+
+        const date = new Date(reserve_info.date);
+        const day_list = ["(일)", "(월)", "(화)", "(수)", "(목)", "(금)", "(토)"];
+        
+        // 날짜 형식 변환
+        const reserve_date = reserve_info.date.replace(/-/g, ".");
+
+        // 오전, 오후 판단
+        const [hourStr, minuteStr] = reserve_info.time.split(":");
+        const hour = parseInt(hourStr, 10);
+
+        let period = '';
+        let displayHour = hour;
+
+        if (hour < 12) {
+            period = '오전';
+            if (hour === 0) displayHour = 12;
+        } else {
+            period = '오후';
+            if (hour > 12) displayHour = hour - 12;
+        }
+
+        const result = {
+            date: reserve_date.concat(" ", day_list[date.getDay()]),
+            time: period.concat(" ", hour),
+            people_num: reserve_info.people_num + "명"
+        };
+        res.status(200).json(result);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 // 예약 일시, 인원, 시간 데이터 저장 
 router.post('/step1/:apikey/:shop_id', async (req, res) => {
     try {
