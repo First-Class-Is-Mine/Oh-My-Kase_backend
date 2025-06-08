@@ -2,6 +2,7 @@
 
 const express = require('express');
 const uuidAPIKey = require('uuid-apikey');
+const mailSender = require('../utils/mailSender.js');
 var db = require("../config/db.js");
 
 const key = {
@@ -128,6 +129,14 @@ router.post('/step3/:apikey/:reservation_id', async (req, res) => {
 
         await db.query('UPDATE reservation SET allergy= ? WHERE id = ?', [ input_allergy, reservation_id]);
         console.log("알레르기 정보 저장 완료!");
+
+        const [user_info] = await db.query('SELECT user_mail FROM reservation WHERE id = ?', [reservation_id]);
+
+        // 예약 메일 보내기
+        setTimeout(function() { 
+            mailSender.sendReservationEmail(user_info[0].user_mail);
+        }, 30000);
+
         return res.status(200).json({ message: '예약이 완료되었습니다!' });
 
     } catch (err) {
