@@ -52,7 +52,7 @@ router.get('/info/:apikey/:reservation_id', async (req, res) => {
 
         const result = {
             date: reserve_date.concat(" ", day_list[date.getDay()]),
-            time: period.concat(" ", hour),
+            time: period.concat(" ", displayHour, "시"),
             people_num: reserve_info.people_num + "명"
         };
         res.status(200).json(result);
