@@ -15,6 +15,7 @@ const BookMark = require('./routes/boomark_api');
 const Search = require('./routes/search_api');
 const Shop = require('./routes/shop_api');
 const Reservation = require('./routes/resesrvation_api');
+const Review = require('./routes/review_api');
 
 app.use(morgan('dev'));
 app.use('/',express.static(path.join(__dirname, 'public')));
@@ -38,6 +39,7 @@ app.use('/api/bookmark', BookMark);
 app.use('/api/search', Search);
 app.use('/api/shop', Shop);
 app.use('/api/reservation', Reservation);
+app.use('/api/review', Review);
 
 // 기본 라우터
 app.get('/',(req,res)=>{
