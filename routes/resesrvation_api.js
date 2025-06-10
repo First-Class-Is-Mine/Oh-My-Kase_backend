@@ -134,7 +134,7 @@ router.post('/step3/:apikey/:reservation_id', async (req, res) => {
 
         // 예약 메일 보내기
         setTimeout(function() { 
-            mailSender.sendReservationEmail(user_info[0].user_mail);
+            mailSender.sendReservationEmail(user_info[0].user_mail, reservation_id);
         }, 30000);
 
         return res.status(200).json({ message: '예약이 완료되었습니다!' });
