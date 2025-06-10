@@ -5,7 +5,7 @@ var db = require("../config/db.js");
 require('dotenv').config();
 
 // 손님에게 전송하는 예약 확인 메일
-async function sendReservationEmail(toEmail) {
+async function sendReservationEmail(toEmail, reservation_id) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -25,7 +25,7 @@ async function sendReservationEmail(toEmail) {
     console.log(`✅ Email sent: ${info.response}`);
 
     // 예약 상태 바꿔주는 쿼리 작성하기
-    await db.query(`UPDATE reservation SET status = ?`, "예약 확정");
+    await db.query(`UPDATE reservation SET status = ? WHERE id = ?`, ["예약 확정", reservation_id]);
 }
 
 module.exports = { sendReservationEmail };
