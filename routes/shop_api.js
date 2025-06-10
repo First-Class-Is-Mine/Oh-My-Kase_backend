@@ -56,4 +56,65 @@ router.get('/:apikey/:shop_id', async (req, res) => {
     }
 });
 
+// 가게 리뷰 조회
+router.get('/reviews/:apikey/:shop_id', async (req, res) => {
+    try {
+        const { apikey, shop_id} = req.params;
+        const user_id = req.session.user?.id;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        const [reviews] = await db.query(
+            `SELECT r.id, u.user_nickname, r.shop_id, s.shop_name, r.date, r.people_num, r.L_price, r.H_price,
+            review_rating, review_image, review_writing
+            FROM review, reservation r JOIN shop s ON r.shop_id = s.id JOIN user u ON r.user_id = u.id
+            WHERE r.review_written = 'yes' AND review.reservation_id = r.id AND r.user_id = ? AND r.shop_id = ?`, [user_id, shop_id]
+        );
+
+        const review_list = reviews.map(review => {
+
+            if(!review) {
+                return res.status(400).json({ error: '예약 정보가 없습니다.' });
+            }
+
+            // 리뷰 작성 후 지난 시간 구하기
+            const date = new Date(review.date);
+            const now_date = new Date();
+
+            const diffTime = now_date - date;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let written_Date = "";
+            if (diffDays >= 30) {
+                const diffMonths = Math.floor(diffDays / 30);
+                written_Date = `${diffMonths}달 전`;
+            } else {
+                written_Date = `${diffDays}일 전`;
+            }
+                    
+            const people_num = review.people_num + "명";
+
+            return {
+                shop_id: review.shop_id,
+                user: review.user_nickname,
+                shop_name: review.shop_name,
+                date: written_Date,
+                people_num: people_num,
+                price: "¥".concat("", review.L_price, " ~ ¥", review.H_price),
+                rating: review.review_rating,
+                images: review.review_image,
+                writing: review.review_writing
+            }
+        });
+        res.status(200).json(review_list);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 module.exports = router;
