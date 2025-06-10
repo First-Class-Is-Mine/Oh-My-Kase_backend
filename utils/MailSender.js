@@ -25,7 +25,7 @@ async function sendReservationEmail(toEmail) {
     console.log(`✅ Email sent: ${info.response}`);
 
     // 예약 상태 바꿔주는 쿼리 작성하기
-    await db.query(`UPDATE reservation SET status = ?`, "OK")
+    await db.query(`UPDATE reservation SET status = ?`, "예약 확정");
 }
 
 module.exports = { sendReservationEmail };
