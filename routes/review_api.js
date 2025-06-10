@@ -142,6 +142,10 @@ router.post('/write/:apikey/:reservation_id', async (req, res) => {
             `INSERT INTO review (reservation_id, review_rating, review_image, review_writing) VALUES (?, ?, ?, ?)`, [reservation_id, rating, image, writing]
         );
 
+        await db.query(
+            `UPDATE reservation SET review_written = ? WHERE id = ?`, ["yes", reservation_id]
+        );
+
         res.status(200).json({ message: "리뷰가 저장 되었습니다." });
 
     } catch (err) {
