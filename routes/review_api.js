@@ -154,6 +154,50 @@ router.post('/write/:apikey/:reservation_id', async (req, res) => {
     }
 });
 
+// 리뷰 수정
+router.patch('/edit/:apikey/:review_id', async (req, res) => {
+    try {
+        const { apikey, review_id } = req.params;
+        const { rating, image, writing } = req.body;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        // 수정할 필드만 동적으로 구성
+        const fields = [];
+        const values = [];
+                
+        if(rating) {
+            fields.push('review_ratin = ?');
+            values.push(rating);
+        }
+        if(image) {
+            fields.push('review_image = ?');
+            values.push(image);
+        }
+        if(writing) {
+            fields.push('review_writing = ?');
+            values.push(writing);
+        }
+        
+        if (fields.length === 0) {
+            return res.status(400).send({ err: '수정할 정보가 없습니다.' });
+        }
+        
+        values.push(review_id);
+    
+        const query = `UPDATE review SET ${fields.join(', ')} WHERE id = ?`;
+        await db.query(query, values);
+        return res.status(200).send({ message: '리뷰가 수정되었습니다!' });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 // 전체 리뷰
 router.get('/all/:apikey', async (req, res) => {
     try {
