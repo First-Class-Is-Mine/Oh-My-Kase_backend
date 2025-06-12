@@ -170,7 +170,7 @@ router.patch('/edit/:apikey/:review_id', async (req, res) => {
         const values = [];
                 
         if(rating) {
-            fields.push('review_ratin = ?');
+            fields.push('review_rating = ?');
             values.push(rating);
         }
         if(image) {
