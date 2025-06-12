@@ -128,30 +128,4 @@ router.get('/reviews/:apikey/:shop_id', async (req, res) => {
     }
 });
 
-// 가게 별점
-router.get('rating/:apikey/:shop_id', async (req, res) => {
-    try {
-        const { apikey, shop_id } = req.params;
-
-        // API 키 검증
-        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
-            return res.status(401).send('apikey is not valid.');
-        }
-
-        const [review_rating] = await db.query(
-            `UPDATE shop SET rating = (SELECT FLOOR(AVG(review.review_rating)) AS shop_rating
-            FROM review
-            JOIN reservation r ON review.reservation_id = r.id
-            JOIN shop s ON r.shop_id = s.id
-            WHERE s.id = ?)`, [shop_id]
-        );
-
-        res.status(200).send(review_rating[0]);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Database error' });
-    }
-});
-
 module.exports = router;
