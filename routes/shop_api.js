@@ -43,6 +43,17 @@ router.get('/:apikey/:shop_id', async (req, res) => {
             return res.status(400).send({ error: 'shop_id 값이 존재하지 않습니다.' });
         }
 
+        // 리뷰를 통한 별점 개산
+        await db.query(
+            `UPDATE shop SET rating = (
+                SELECT FLOOR(AVG(review.review_rating))
+                FROM review
+                JOIN reservation r ON review.reservation_id = r.id
+                WHERE r.shop_id = shop.id)
+            WHERE shop.id = ?`, [shop_id]
+        );
+        console.log("별점이 반영 되었습니다.");
+
         const [shop] = await db.query('SELECT DISTINCT shop.*, GROUP_CONCAT(DISTINCT tag_list.tag_name) AS tag_names, GROUP_CONCAT(DISTINCT shop_images.image) AS shop_images, area.area_name FROM shop JOIN area ON shop.area_id = area.id JOIN tag ON shop.id = tag.shop_id JOIN tag_list ON tag.tag_id = tag_list.id LEFT JOIN shop_images ON shop.id = shop_images.shop_id WHERE shop.id = ? GROUP BY shop.id', [shop_id]);
         
         if (!shop) {
@@ -110,6 +121,32 @@ router.get('/reviews/:apikey/:shop_id', async (req, res) => {
             }
         });
         res.status(200).json(review_list);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// 가게 별점
+router.get('rating/:apikey/:shop_id', async (req, res) => {
+    try {
+        const { apikey, shop_id } = req.params;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        const [review_rating] = await db.query(
+            `UPDATE shop SET rating = (SELECT FLOOR(AVG(review.review_rating)) AS shop_rating
+            FROM review
+            JOIN reservation r ON review.reservation_id = r.id
+            JOIN shop s ON r.shop_id = s.id
+            WHERE s.id = ?)`, [shop_id]
+        );
+
+        res.status(200).send(review_rating[0]);
 
     } catch (err) {
         console.error(err);
