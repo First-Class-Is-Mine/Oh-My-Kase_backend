@@ -84,7 +84,6 @@ router.get('/:apikey/:shop_id', async (req, res) => {
 router.get('/reviews/:apikey/:shop_id', async (req, res) => {
     try {
         const { apikey, shop_id} = req.params;
-        const user_id = req.session.user?.id;
 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
@@ -95,7 +94,7 @@ router.get('/reviews/:apikey/:shop_id', async (req, res) => {
             `SELECT r.id, u.user_nickname, r.shop_id, s.shop_name, r.date, r.people_num, r.L_price, r.H_price,
             review_rating, review_image, review_writing
             FROM review, reservation r JOIN shop s ON r.shop_id = s.id JOIN user u ON r.user_id = u.id
-            WHERE r.review_written = 'yes' AND review.reservation_id = r.id AND r.user_id = ? AND r.shop_id = ?`, [user_id, shop_id]
+            WHERE r.review_written = 'yes' AND review.reservation_id = r.id AND r.shop_id = ?`, [shop_id]
         );
 
         const review_list = reviews.map(review => {
