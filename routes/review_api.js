@@ -209,7 +209,7 @@ router.get('/all/:apikey', async (req, res) => {
         }
 
         const [reviews] = await db.query(
-            `SELECT r.id, u.user_nickname, r.shop_id, s.shop_name, r.date, r.people_num, r.L_price, r.H_price,
+            `SELECT r.id, review.id as review_id, u.user_nickname, r.shop_id, s.shop_name, r.date, r.people_num, r.L_price, r.H_price,
             review_rating, review_image, review_writing
             FROM review, reservation r JOIN shop s ON r.shop_id = s.id JOIN user u ON r.user_id = u.id
             WHERE r.review_written = 'yes' AND review.reservation_id = r.id`
@@ -239,6 +239,8 @@ router.get('/all/:apikey', async (req, res) => {
             const people_num = review.people_num + "명";
 
             return {
+                review_id: review.review_id,
+                reservation_id: review.id,
                 shop_id: review.shop_id,
                 user: review.user_nickname,
                 shop_name: review.shop_name,
@@ -270,7 +272,7 @@ router.get('/my/:apikey', async (req, res) => {
         }
 
         const [reviews] = await db.query(
-            `SELECT r.id, u.user_nickname, r.shop_id, s.shop_name, r.date, r.people_num, r.L_price, r.H_price,
+            `SELECT r.id, review.id as review_id, u.user_nickname, r.shop_id, s.shop_name, r.date, r.people_num, r.L_price, r.H_price,
             review_rating, review_image, review_writing
             FROM review, reservation r JOIN shop s ON r.shop_id = s.id JOIN user u ON r.user_id = u.id
             WHERE r.review_written = 'yes' AND review.reservation_id = r.id AND r.user_id = ?`, [user_id]
@@ -300,6 +302,8 @@ router.get('/my/:apikey', async (req, res) => {
             const people_num = review.people_num + "명";
 
             return {
+                review_id: review.review_id,
+                reservation_id: review.id,
                 shop_id: review.shop_id,
                 user: review.user_nickname,
                 shop_name: review.shop_name,
