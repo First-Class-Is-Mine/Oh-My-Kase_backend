@@ -54,7 +54,20 @@ router.get('/:apikey/:shop_id', async (req, res) => {
         );
         console.log("별점이 반영 되었습니다.");
 
-        const [shop] = await db.query('SELECT DISTINCT shop.*, GROUP_CONCAT(DISTINCT tag_list.tag_name) AS tag_names, GROUP_CONCAT(DISTINCT shop_images.image) AS shop_images, area.area_name FROM shop JOIN area ON shop.area_id = area.id JOIN tag ON shop.id = tag.shop_id JOIN tag_list ON tag.tag_id = tag_list.id LEFT JOIN shop_images ON shop.id = shop_images.shop_id WHERE shop.id = ? GROUP BY shop.id', [shop_id]);
+        const [shop_info] = await db.query(
+            `SELECT DISTINCT shop.*, GROUP_CONCAT(DISTINCT tag_list.tag_name) AS tag_names, GROUP_CONCAT(DISTINCT shop_images.image) AS shop_images, area.area_name
+            FROM shop
+            JOIN area ON shop.area_id = area.id
+            JOIN tag ON shop.id = tag.shop_id
+            JOIN tag_list ON tag.tag_id = tag_list.id
+            LEFT JOIN shop_images ON shop.id = shop_images.shop_id
+            WHERE shop.id = ? GROUP BY shop.id`, [shop_id]);
+
+        // 별점이 null이면 0으로 하기
+        const shop = shop_info.map(item => {
+            if(item.rating === null) item.rating = 0;
+            return item;
+        });
         
         if (!shop) {
             return res.status(400).send({ error: '조건에 맞는 shop이 존재하지 않습니다.' });
