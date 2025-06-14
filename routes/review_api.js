@@ -3,6 +3,7 @@
 const express = require('express');
 const uuidAPIKey = require('uuid-apikey');
 var db = require("../config/db.js");
+const ReviewUpload = require('../middlewares/ReviewUploadMiddleware.js');
 
 const key = {
     apiKey: process.env.API_KEY,
@@ -128,18 +129,21 @@ router.get('/chose_write/:apikey/:reservation_id', async (req, res) => {
 });
 
 // 리뷰 작성
-router.post('/write/:apikey/:reservation_id', async (req, res) => {
+router.post('/write/:apikey/:reservation_id', ReviewUpload.array('images', 4), async (req, res) => {
     try {
         const { apikey, reservation_id } = req.params;
-        const { rating, image, writing } = req.body;
+        const { rating, writing } = req.body;
+        const images = req.files;
 
         // API 키 검증
         if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
             return res.status(401).send('apikey is not valid.');
         }
 
+        const imagePaths = images?.map(file => file.filename) || [];
+
         await db.query(
-            `INSERT INTO review (reservation_id, review_rating, review_image, review_writing) VALUES (?, ?, ?, ?)`, [reservation_id, rating, image, writing]
+            `INSERT INTO review (reservation_id, review_rating, review_image, review_writing) VALUES (?, ?, ?, ?)`, [reservation_id, Number(rating), JSON.stringify(imagePaths), writing]
         );
 
         await db.query(
