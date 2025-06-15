@@ -40,6 +40,7 @@ app.use('/api/search', Search);
 app.use('/api/shop', Shop);
 app.use('/api/reservation', Reservation);
 app.use('/api/review', Review);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 기본 라우터
 app.get('/',(req,res)=>{
