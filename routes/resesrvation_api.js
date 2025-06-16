@@ -120,7 +120,7 @@ router.post('/step2/:apikey/:reservation_id', async (req, res) => {
     }
 });
 
-// 유저 알레르기 정보 반혼
+// 유저 알레르기 정보 반환
 router.get('/user_info/:apikey/:user_id', async (req, res) => {
     try {
         const { apikey, user_id } = req.params;
@@ -130,8 +130,9 @@ router.get('/user_info/:apikey/:user_id', async (req, res) => {
             return res.status(401).send('apikey is not valid.');
         }
 
-        await db.query('SELECT user SET allergy= ? WHERE id = ?', [user_id]);
-        console.log("알레르기 정보 저장 완료!");
+        const[user_allergy] = await db.query('SELECT user_allergy FROM user WHERE id = ?', [user_id]);
+        const allergy = user_allergy[0].user_allergy;
+        res.status(200).send(allergy);
 
     } catch (err) {
         console.error(err);
