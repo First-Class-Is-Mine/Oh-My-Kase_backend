@@ -105,10 +105,33 @@ router.post('/step2/:apikey/:reservation_id', async (req, res) => {
             return res.status(400).send('name 또는 mail 또는 max_price 또는 min_price가 비어있습니다.')
         }
 
-        const [reservation] = await db.query('UPDATE reservation SET user_name = ?, user_mail = ?, H_price = ?, L_price = ?, food_amount = ? WHERE id = ?', [name, mail, max_price, min_price, food_amount, reservation_id]);
-        const peopel_num = reservation.peopel_num;
+        await db.query('UPDATE reservation SET user_name = ?, user_mail = ?, H_price = ?, L_price = ?, food_amount = ? WHERE id = ?', [name, mail, max_price, min_price, food_amount, reservation_id]);
+        const [reservation] = await db.query('SELECT * FROM reservation WHERE id = ?', [reservation_id]);
+        const reservation_info = reservation[0];
+        console.log(reservation_info);
+        const user_id = reservation_info.user_id;
+        const people_num = reservation_info.people_num;
         console.log("예약자명, 이메일, 음식 가격대, 음식양 저장 완료!");
-        return res.status(200).json({ reservation_id, peopel_num });
+        return res.status(200).json({ user_id : user_id, reservation_id : reservation_id, people_num : people_num });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// 유저 알레르기 정보 반혼
+router.get('/user_info/:apikey/:user_id', async (req, res) => {
+    try {
+        const { apikey, user_id } = req.params;
+
+        // API 키 검증
+        if (!uuidAPIKey.isAPIKey(apikey) || !uuidAPIKey.check(apikey, key.uuid)) {
+            return res.status(401).send('apikey is not valid.');
+        }
+
+        await db.query('SELECT user SET allergy= ? WHERE id = ?', [user_id]);
+        console.log("알레르기 정보 저장 완료!");
 
     } catch (err) {
         console.error(err);
