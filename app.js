@@ -43,7 +43,6 @@ app.use('/api/reservation', Reservation);
 app.use('/api/review', Review);
 app.use('/api/shop_data', ShopData);
 app.use('/uploads', express.static(process.env.REVIEW_PATH));
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 기본 라우터
 app.get('/',(req,res)=>{
