@@ -40,7 +40,9 @@ app.use('/api/search', Search);
 app.use('/api/shop', Shop);
 app.use('/api/reservation', Reservation);
 app.use('/api/review', Review);
-app.use('/uploads', express.static(process.env.REVIEW_PATH));
+
+const reviewPath = process.env.REVIEW_PATH || path.join(__dirname, 'uploads/reviews');
+app.use('/uploads', express.static(reviewPath));
 
 // 기본 라우터
 app.get('/',(req,res)=>{
