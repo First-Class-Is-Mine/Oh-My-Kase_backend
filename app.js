@@ -16,7 +16,6 @@ const Search = require('./routes/search_api');
 const Shop = require('./routes/shop_api');
 const Reservation = require('./routes/reservation_api');
 const Review = require('./routes/review_api');
-const ShopData = require('./routes/shop_data_api');
 
 app.use(morgan('dev'));
 app.use('/',express.static(path.join(__dirname, 'public')));
