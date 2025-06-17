@@ -2,7 +2,7 @@
 
 const express = require('express');
 const uuidAPIKey = require('uuid-apikey');
-const mailSender = require('../utils/mailSender.js');
+const mailSender = require('../utils/MailSender.js');
 var db = require("../config/db.js");
 
 const key = {
