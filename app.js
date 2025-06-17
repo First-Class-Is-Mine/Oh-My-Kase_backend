@@ -14,8 +14,9 @@ const User = require('./routes/user_api');
 const BookMark = require('./routes/boomark_api');
 const Search = require('./routes/search_api');
 const Shop = require('./routes/shop_api');
-const Reservation = require('./routes/resesrvation_api');
+const Reservation = require('./routes/reservation_api');
 const Review = require('./routes/review_api');
+const ShopData = require('./routes/shop_data_api');
 
 app.use(morgan('dev'));
 app.use('/',express.static(path.join(__dirname, 'public')));
@@ -40,7 +41,9 @@ app.use('/api/search', Search);
 app.use('/api/shop', Shop);
 app.use('/api/reservation', Reservation);
 app.use('/api/review', Review);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/shop_data', ShopData);
+app.use('/uploads', express.static(process.env.REVIEW_PATH));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 기본 라우터
 app.get('/',(req,res)=>{
