@@ -14,9 +14,8 @@ app.use(cors({
   origin: function (origin, callback) {
     console.log('CORS 요청 origin:', origin); // 여기서 문제 되는 origin이 뭔지 확인
     const allowedOrigins = [
-      'http://localhost:3001',
-      'https://ohmykase.vercel.app',
-      'https://ohmykase.mirim-it-show.site'
+        'https://ohmykase.vercel.app/',
+        'https://ohmykase.mirim-it-show.site/'
     ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
