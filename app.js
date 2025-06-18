@@ -46,6 +46,7 @@ app.use(session({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
     secure: true,
   },
   name: 'session-cookie',
