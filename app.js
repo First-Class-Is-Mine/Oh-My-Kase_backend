@@ -16,6 +16,7 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost:3001',
       'https://ohmykase.vercel.app',
+      'https://ohmykase-8i5z5hkl2-hofkjs-projects.vercel.app',
       'https://ohmykase.mirim-it-show.site'
     ];
     if (!origin || allowedOrigins.includes(origin)) {
