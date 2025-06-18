@@ -12,7 +12,7 @@ app.set('port', process.env.PORT || 3000);
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log('CORS 요청 origin:', origin); // 여기서 문제 되는 origin이 뭔지 확인
+    console.log('CORS 요청 origin:', origin);
     const allowedOrigins = [
         'https://ohmykase.vercel.app/',
         'https://ohmykase.mirim-it-show.site/'
