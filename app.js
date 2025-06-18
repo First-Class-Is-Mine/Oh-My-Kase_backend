@@ -1,15 +1,20 @@
 const express = require('express');
 const morgan = require('morgan');
-const cookiParser = require('cookie-parser');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
 
 dotenv.config();
 const app = express();
-app.set('port', process.env.PORT || 3000)
+app.set('port', process.env.PORT || 3000);
 
-// 라우터 설정
+app.use(cors({
+  origin: 'http://localhost:3001', // 프론트엔드 주소
+  credentials: true
+}));
+
 const User = require('./routes/user_api');
 const BookMark = require('./routes/boomark_api');
 const Search = require('./routes/search_api');
@@ -18,22 +23,20 @@ const Reservation = require('./routes/reservation_api');
 const Review = require('./routes/review_api');
 
 app.use(morgan('dev'));
-app.use('/',express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false}));
-app.use(cookiParser(process.env.COOKIE_SECRET));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET,
-    cookie: {
-        httpOnly: true,
-        secure: false,
-    },
-    name: 'session-cookie',
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+  name: 'session-cookie',
 }));
-
-// routes에서 만든 라우터 불러오기
 app.use('/api/user', User);
 app.use('/api/bookmark', BookMark);
 app.use('/api/search', Search);
@@ -44,11 +47,10 @@ app.use('/api/review', Review);
 const reviewPath = process.env.REVIEW_PATH || path.join(__dirname, 'uploads/reviews');
 app.use('/uploads', express.static(reviewPath));
 
-// 기본 라우터
-app.get('/',(req,res)=>{
-    res.send('Hello, Express');
+app.get('/', (req, res) => {
+  res.send('Hello, Express');
 });
 
-app.listen(app.get('port'),()=>{
-    console.log(app.get('port'),'번 포트에서 대기 중');
+app.listen(app.get('port'), () => {
+  console.log(app.get('port'), '번 포트에서 대기 중');
 });
