@@ -11,9 +11,14 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 
 app.use(cors({
-  origin: 'http://localhost:3001', // 프론트엔드 주소
+  origin: [
+    'http://localhost:3001',
+    'https://ohmykase.vercel.app',
+    'https://ohmykase.mirim-it-show.site'
+  ],
   credentials: true
 }));
+
 
 const User = require('./routes/user_api');
 const BookMark = require('./routes/boomark_api');
