@@ -16,7 +16,6 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost:3001',
       'https://ohmykase.vercel.app',
-      'https://ohmykase-8i5z5hkl2-hofkjs-projects.vercel.app',
       'https://ohmykase.mirim-it-show.site'
     ];
     if (!origin || allowedOrigins.includes(origin)) {
@@ -41,15 +40,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
-  resave: false,
-  saveUninitialized: false,
   secret: process.env.COOKIE_SECRET,
+  resave: false,
+  saveUninitialized: true,
   cookie: {
-    httpOnly: true,
     secure: true,
-  },
-  name: 'session-cookie',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60
+  }
 }));
+
 app.use('/api/user', User);
 app.use('/api/bookmark', BookMark);
 app.use('/api/search', Search);
