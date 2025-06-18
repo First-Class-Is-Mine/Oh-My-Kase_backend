@@ -38,10 +38,12 @@ app.use(session({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    secure: false,
+    secure: true,      // 배포 서버에서는 true
+    sameSite: 'none', 
   },
   name: 'session-cookie',
 }));
+
 app.use('/api/user', User);
 app.use('/api/bookmark', BookMark);
 app.use('/api/search', Search);
