@@ -21,7 +21,12 @@ router.get('/shop_list/:apikey', async (req, res) => {
             return res.status(401).send('apikey is not valid.');
         }
 
-        const [shop_list] = await db.query('SELECT shop.id, shop.area_id, shop.shop_category_id, shop.shop_name, shop.rating, area.area_name, GROUP_CONCAT(DISTINCT shop_images.image) AS shop_images FROM shop JOIN area ON shop.area_id = area.id LEFT JOIN shop_images ON shop.id = shop_images.shop_id GROUP BY shop.id, shop.area_id, shop.shop_category_id, shop.shop_name, shop.rating, area.area_name;');
+        const [shop_list] = await db.query(
+            `SELECT shop.id, shop.area_id, shop.shop_category_id,
+            shop.shop_name, shop.rating, area.area_name, shop.shop_banner_image, shop.shop_detail_images
+            FROM shop JOIN area ON shop.area_id = area.id GROUP BY shop.id, shop.area_id,
+            shop.shop_category_id, shop.shop_name, shop.rating, shop.shop_banner_image, shop.shop_detail_images`
+        );
         res.status(200).send(shop_list);
 
     } catch (err) {
@@ -55,13 +60,24 @@ router.get('/:apikey/:shop_id', async (req, res) => {
         console.log("별점이 반영 되었습니다.");
 
         const [shop_info] = await db.query(
-            `SELECT DISTINCT shop.*, GROUP_CONCAT(DISTINCT tag_list.tag_name) AS tag_names, GROUP_CONCAT(DISTINCT shop_images.image) AS shop_images, area.area_name
+            `SELECT 
+            shop.id, shop.area_id, shop.shop_category_id,
+            shop.shop_name, shop.rating, shop.shop_time,
+            shop.shop_word, shop.shop_telnum, shop.shop_location, shop.shop_location_path,
+            shop.shop_banner_image, shop.shop_detail_images,
+            GROUP_CONCAT(DISTINCT tag_list.tag_name) AS tag_names,
+            area.area_name
             FROM shop
             JOIN area ON shop.area_id = area.id
             JOIN tag ON shop.id = tag.shop_id
             JOIN tag_list ON tag.tag_id = tag_list.id
-            LEFT JOIN shop_images ON shop.id = shop_images.shop_id
-            WHERE shop.id = ? GROUP BY shop.id`, [shop_id]);
+            WHERE shop.id = ?
+            GROUP BY 
+            shop.id, shop.area_id, shop.shop_category_id,
+            shop.shop_name, shop.rating, shop.shop_time,
+            shop.shop_word, shop.shop_telnum, shop.shop_location, shop.shop_location_path,
+            shop.shop_banner_image, shop.shop_detail_images,
+            area.area_name;`, [shop_id]);
 
         // 별점이 null이면 0으로 하기
         const shop = shop_info.map(item => {
